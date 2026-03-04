@@ -77,6 +77,10 @@ async function baseHandler(req: Request): Promise<Response> {
     let body;
     try {
         body = await req.json() as ApiRequest;
+        if (pathname === '/get_sts' && Deno.env.get("FIXED_PLAYER_URL")?.toString().trim().startsWith("https://www.youtube.com/s/player")) {
+            body.player_url = Deno.env.get("FIXED_PLAYER_URL")!;
+            console.log(`Overriding player URL for sts request with : ${body.player_url} `);
+        }
     } catch {
         return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
